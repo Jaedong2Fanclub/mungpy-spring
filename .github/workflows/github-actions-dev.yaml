@@ -43,7 +43,7 @@ jobs:
     steps:
       - name: set env & deploy
         run: |
-          cd /home/ubuntu/deploy/back
+          cd /home/haserverm/deploy/back
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
           sudo docker image prune -a -f
           sudo docker-compose -f docker-compose.back.yaml down
