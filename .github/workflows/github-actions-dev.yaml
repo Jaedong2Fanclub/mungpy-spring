@@ -37,7 +37,7 @@ jobs:
         run: docker push ghcr.io/namgyu11/be-dev:latest
 
   deploy_dev:
-    runs-on: [ self-hosted, Linux, X64, mungpy_be_dev ]
+    runs-on: [ self-hosted, Linux, X64, mungpy-be-dev ]
     name: Deploy Dev API
     needs: build
     steps:
