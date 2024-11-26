@@ -28,13 +28,13 @@ jobs:
         run: ./gradlew bootJar
 
       - name: Build Docker Image
-        run: docker build -t ghcr.io/Namgyu11/be-dev:latest .
+        run: docker build -t ghcr.io/namgyu11/be-dev:latest .
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GIT_USER }} --password-stdin
 
       - name: Push Docker Image to GHCR
-        run: docker push ghcr.io/Namgyu11/be-dev:latest
+        run: docker push ghcr.io/namgyu11/be-dev:latest
 
   deploy_dev:
     runs-on: [ self-hosted, Linux, X64, mungpy_be_dev ]
