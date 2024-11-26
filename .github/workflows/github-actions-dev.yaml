@@ -1,0 +1,51 @@
+name: BE Dev(Test) Build & Deploy
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: Build Docker Image
+        run: docker build -t ghcr.io/Namgyu11/be-dev:latest .
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GIT_USER }} --password-stdin
+
+      - name: Push Docker Image to GHCR
+        run: docker push ghcr.io/Namgyu11/be-dev:latest
+
+  deploy_dev:
+    runs-on: [ self-hosted, Linux, X64, mungpy_be_dev ]
+    name: Deploy Dev API
+    needs: build
+    steps:
+      - name: set env & deploy
+        run: |
+          cd /home/ubuntu/deploy/back
+          echo "${{ secrets.ENV_FILE_DEV }}" > .env
+          sudo docker image prune -a -f
+          sudo docker-compose -f docker-compose.back.yaml down
+          sudo docker-compose -f docker-compose.back.yaml pull
+          sudo docker-compose -f docker-compose.back.yaml up -d
