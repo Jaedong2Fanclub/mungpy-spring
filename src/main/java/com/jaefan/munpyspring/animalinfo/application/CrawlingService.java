@@ -13,6 +13,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jaefan.munpyspring.animalinfo.application.util.AnimalConverter;
+import com.jaefan.munpyspring.animalinfo.domain.model.PublicAnimal;
+import com.jaefan.munpyspring.animalinfo.domain.repository.PublicAnimalRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +33,10 @@ public class CrawlingService {
 	private static final String PROTECTION = "protection/protectionList.do?menuNo=1000000060";
 
 	private final WebDriver webDriver;
+	private final AnimalConverter animalConverter;
+	private final PublicAnimalRepository publicAnimalRepository;
 
+	@Transactional
 	public void crawl(String category) {
 		String baseUrl = URL;
 		baseUrl += category.equals("public") ? PUBLIC : PROTECTION;
@@ -44,7 +52,7 @@ public class CrawlingService {
 		WebElement ulElement = webDriver.findElement(By.className("animals-list"));
 		List<WebElement> liElements = ulElement.findElements(By.xpath("./li"));
 
-		for (int i = 0 ; i < liElements.size() ; i++) {
+		for (int i = 0; i < liElements.size(); i++) {
 			if (category.equals("protection")) {
 				ulElement = webDriver.findElement(By.className("animals-list"));
 				liElements = ulElement.findElements(By.xpath("./li"));
@@ -74,6 +82,12 @@ public class CrawlingService {
 					// 	String savePath = String.format("src/main/resources/images/%s(%d).jpg", map.get("공고번호"), j + 1);
 					// 	ImageDownloader.downloadImage(images.get(j).getAttribute("src"), savePath);
 					// }
+
+					PublicAnimal publicAnimal = animalConverter.convertMapToPublic(map);
+					if (publicAnimal != null) {
+						log.info(publicAnimal.toString());
+						publicAnimalRepository.save(publicAnimal);
+					}
 				}
 				case "protection" -> {
 					extractTableInfo(map);
