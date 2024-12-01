@@ -2,6 +2,8 @@ package com.jaefan.munpyspring.signUp.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.jaefan.munpyspring.animalRegistration.domain.model.ProtectionStatus;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,15 +21,15 @@ public class User {
 
 	private String s3Url;
 
-	private Provider providerType;
+	// private Provider providerType; SignUp 기능 구현 필요
 
 	private String email;
 
-	private Status status;
+	private ProtectionStatus protectionStatus;
 
 	private LocalDateTime createdAt;
 
 	private LocalDateTime visitedAt;
 
-	private Role role;
+	// private Role role; SignUp 기능 구현 필요
 }
