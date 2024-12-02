@@ -7,6 +7,8 @@ import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,16 +32,20 @@ public class PublicAnimal {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String type;
+	@Enumerated(EnumType.STRING)
+	private AnimalType type;
 
-	private String gender;
+	@Enumerated(EnumType.STRING)
+	private AnimalGender gender;
 
-	private String isNeutered;
+	@Enumerated(EnumType.STRING)
+	private AnimalNeutered isNeutered;
 
 	private Boolean caution;
 
 	private String noticeNo;
 
+	@Enumerated(EnumType.STRING)
 	private ProtectionStatus protectionStatus;
 
 	private LocalDateTime exitAt;

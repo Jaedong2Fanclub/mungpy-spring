@@ -78,6 +78,7 @@ public class CrawlingService {
 					extractTableInfo(map, "구조 정보");
 					extractTableInfo(map, "동물보호센터 안내");
 
+					// TODO : GCP에 사진 업로드하는 로직 구현
 					// for (int j = 0; j < images.size(); j++) {
 					// 	String savePath = String.format("src/main/resources/images/%s(%d).jpg", map.get("공고번호"), j + 1);
 					// 	ImageDownloader.downloadImage(images.get(j).getAttribute("src"), savePath);

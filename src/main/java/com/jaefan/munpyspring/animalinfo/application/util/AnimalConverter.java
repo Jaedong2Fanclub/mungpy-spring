@@ -1,5 +1,7 @@
 package com.jaefan.munpyspring.animalinfo.application.util;
 
+import static com.jaefan.munpyspring.animalinfo.domain.model.AnimalType.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +9,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.jaefan.munpyspring.animalinfo.domain.model.AnimalGender;
+import com.jaefan.munpyspring.animalinfo.domain.model.AnimalNeutered;
+import com.jaefan.munpyspring.animalinfo.domain.model.AnimalType;
 import com.jaefan.munpyspring.animalinfo.domain.model.ProtectionStatus;
 import com.jaefan.munpyspring.animalinfo.domain.model.PublicAnimal;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
@@ -21,27 +26,19 @@ public class AnimalConverter {
 	private final ShelterRepository shelterRepository;
 
 	public PublicAnimal convertMapToPublic(Map<String, String> map) {
-		String type = switch (map.get("동물종류")) {
-			case "개" -> "DOG";
-			case "고양이" -> "CAT";
-			default -> "OTHER";
+		AnimalType type = switch (map.get("동물종류")) {
+			case "개" -> DOG;
+			case "고양이" -> CAT;
+			default -> OTHER;
 		};
 
-		if (type.equals("OTHER")) {
+		if (type.equals(OTHER)) {
 			return null;
 		}
 
-		String gender = switch (map.get("성별")) {
-			case "수컷" -> "MALE";
-			case "암컷" -> "FEMALE";
-			default -> "UNKNOWN";
-		};
+		AnimalGender gender = getAnimalGender(map);
 
-		String isNeutered = switch (map.get("중성화 여부")) {
-			case "예" -> "YES";
-			case "아니오" -> "NO";
-			default -> "UNKNOWN";
-		};
+		AnimalNeutered isNeutered = getIsNeutered(map);
 
 		boolean caution = hasRiskKeyword(map.get("특징"));
 
@@ -74,6 +71,22 @@ public class AnimalConverter {
 			.dueAt(dueAt)
 			.shelter(shelter)
 			.build();
+	}
+
+	private AnimalNeutered getIsNeutered(Map<String, String> map) {
+		return switch (map.get("중성화 여부")) {
+			case "예" -> AnimalNeutered.YES;
+			case "아니오" -> AnimalNeutered.NO;
+			default -> AnimalNeutered.UNKNOWN;
+		};
+	}
+
+	private AnimalGender getAnimalGender(Map<String, String> map) {
+		return switch (map.get("성별")) {
+			case "수컷" -> AnimalGender.MALE;
+			case "암컷" -> AnimalGender.FEMALE;
+			default -> AnimalGender.UNKNOWN;
+		};
 	}
 
 	private boolean hasRiskKeyword(String str) {
