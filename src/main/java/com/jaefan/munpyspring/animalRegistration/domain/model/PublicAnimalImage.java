@@ -23,7 +23,7 @@ public class PublicAnimalImage {
 	private String s3Url;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "animal_id")
+	@JoinColumn(name = "publicAnimal_id")
 	private PublicAnimal publicAnimal;
 
 	public PublicAnimalImage(String s3Url, PublicAnimal publicAnimal) {
