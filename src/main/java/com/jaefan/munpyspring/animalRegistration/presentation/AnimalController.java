@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.animalRegistration.application.AnimalService;
-import com.jaefan.munpyspring.animalRegistration.presentation.dto.AnimalRegistRequestDto;
+import com.jaefan.munpyspring.animalRegistration.presentation.dto.PublicAnimalRegistRequestDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,9 @@ public class AnimalController {
 
 	@PostMapping("/api/animal")
 	public ResponseEntity<String> registerAnimal(
-		@Valid @ModelAttribute AnimalRegistRequestDto animalRegistRequestDto) throws
+		@Valid @ModelAttribute PublicAnimalRegistRequestDto publicAnimalRegistRequestDto) throws
 		IOException {
-		animalService.regist(animalRegistRequestDto);
+		animalService.regist(publicAnimalRegistRequestDto);
 		return new ResponseEntity<>("Registration Success", HttpStatus.CREATED);
 	}
 }
