@@ -1,5 +1,7 @@
 package com.jaefan.munpyspring.animalRegistration.domain.model;
 
+import static com.jaefan.munpyspring.animalRegistration.domain.model.ProtectionStatus.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import com.jaefan.munpyspring.signUp.domain.model.Shelter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,10 +23,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Animal {
+public class PublicAnimal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String type;
 
 	private String gender;
@@ -39,8 +43,8 @@ public class Animal {
 	private LocalDateTime exitAt;
 
 	@Setter
-	@OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
-	private List<AnimalImage> animalImages;
+	@OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<PublicAnimalImage> publicAnimalImages;
 
 	private LocalDateTime rescuedAt;
 
@@ -50,31 +54,29 @@ public class Animal {
 
 	private LocalDateTime dueAt;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "breed_id")
 	private Breed breed;
 
-	public Animal(
+	public PublicAnimal(
 		String type, String gender, String isNeutered, Boolean caution,
-		String noticeNo, ProtectionStatus protectionStatus, LocalDateTime exitAt,
-		LocalDateTime rescuedAt, String rescuePlace, String rescueReason,
-		LocalDateTime dueAt, Shelter shelter, Breed breed
+		String noticeNo, LocalDateTime rescuedAt, String rescuePlace,
+		String rescueReason, Shelter shelter, Breed breed
 	) {
 		this.type = type;
 		this.gender = gender;
 		this.isNeutered = isNeutered;
 		this.caution = caution;
 		this.noticeNo = noticeNo;
-		this.protectionStatus = protectionStatus;
-		this.exitAt = exitAt;
+		this.protectionStatus = ENTER;
 		this.rescuedAt = rescuedAt;
 		this.rescuePlace = rescuePlace;
 		this.rescueReason = rescueReason;
-		this.dueAt = dueAt;
+		this.dueAt = LocalDateTime.now().plusDays(10);
 		this.shelter = shelter;
 		this.breed = breed;
 	}
