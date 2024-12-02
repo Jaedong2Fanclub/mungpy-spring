@@ -43,7 +43,7 @@ public class PublicAnimal {
 	private LocalDateTime exitAt;
 
 	@Setter
-	@OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "publicAnimal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<PublicAnimalImage> publicAnimalImages;
 
 	private LocalDateTime rescuedAt;
