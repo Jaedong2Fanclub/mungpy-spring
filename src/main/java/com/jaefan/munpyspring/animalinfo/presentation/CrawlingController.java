@@ -1,6 +1,7 @@
 package com.jaefan.munpyspring.animalinfo.presentation;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +17,13 @@ public class CrawlingController {
 
 	private final CrawlingService crawlingService;
 
+	@Scheduled(cron = "0 50 11,23 * * ?")
+	public void crawl() {
+
+	}
+
 	@GetMapping
-	public ResponseEntity<Void> crawl(String category) {
+	public ResponseEntity<Void> crawlTest(String category) {
 		crawlingService.crawl(category);
 
 		return ResponseEntity.ok().build();

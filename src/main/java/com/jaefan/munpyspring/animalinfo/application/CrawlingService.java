@@ -90,7 +90,12 @@ public class CrawlingService {
 					PublicAnimal publicAnimal = animalConverter.convertMapToPublic(map);
 					if (publicAnimal != null) {
 						log.info(publicAnimal.toString());
-						publicAnimalRepository.save(publicAnimal);
+
+						boolean isAlreadyExist = publicAnimalRepository.findByNoticeNo(publicAnimal.getNoticeNo())
+							.isPresent();
+						if (!isAlreadyExist) {
+							publicAnimalRepository.save(publicAnimal);
+						}
 					}
 				}
 				case "protection" -> {
@@ -99,7 +104,12 @@ public class CrawlingService {
 					ProtectionAnimal protectionAnimal = animalConverter.convertMapToProtection(map);
 					if (protectionAnimal != null) {
 						log.info(protectionAnimal.toString());
-						protectionAnimalRepository.save(protectionAnimal);
+
+						boolean isAlreadyExist = protectionAnimalRepository.findByNoticeNo(protectionAnimal.getNoticeNo())
+							.isPresent();
+						if (!isAlreadyExist) {
+							protectionAnimalRepository.save(protectionAnimal);
+						}
 					}
 				}
 			}
