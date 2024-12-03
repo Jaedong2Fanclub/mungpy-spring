@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.animalinfo.application.util.AnimalConverter;
+import com.jaefan.munpyspring.animalinfo.domain.model.ProtectionAnimal;
 import com.jaefan.munpyspring.animalinfo.domain.model.PublicAnimal;
+import com.jaefan.munpyspring.animalinfo.domain.repository.ProtectionAnimalRepository;
 import com.jaefan.munpyspring.animalinfo.domain.repository.PublicAnimalRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class CrawlingService {
 	private final WebDriver webDriver;
 	private final AnimalConverter animalConverter;
 	private final PublicAnimalRepository publicAnimalRepository;
+	private final ProtectionAnimalRepository protectionAnimalRepository;
 
 	@Transactional
 	public void crawl(String category) {
@@ -92,10 +95,14 @@ public class CrawlingService {
 				}
 				case "protection" -> {
 					extractTableInfo(map);
+
+					ProtectionAnimal protectionAnimal = animalConverter.convertMapToProtection(map);
+					if (protectionAnimal != null) {
+						log.info(protectionAnimal.toString());
+						protectionAnimalRepository.save(protectionAnimal);
+					}
 				}
 			}
-
-			log.info(map.toString());
 
 			webDriver.navigate().back();
 			delay();
@@ -130,9 +137,30 @@ public class CrawlingService {
 			List<WebElement> tdList = tr.findElements(By.tagName("td"));
 
 			for (int i = 0; i < thList.size(); i++) {
-				map.put(thList.get(i).getText(), tdList.get(i).getText());
+				String thText = thList.get(i).getText();
+				String tdText = tdList.get(i).getText();
+
+				if (thText.equals("건강검진") || thText.equals("접종상태")) {
+					tdText = getCheckedString(tdList, i);
+				}
+
+				map.put(thText, tdText);
 			}
 		});
+	}
+
+	private static String getCheckedString(List<WebElement> tdList, int i) {
+		String tdText;
+		List<WebElement> inputList = tdList.get(i).findElements(By.tagName("input"));
+
+		StringBuilder checked = new StringBuilder();
+		for (WebElement input : inputList) {
+			boolean isChecked = input.getAttribute("checked") != null;
+			checked.append(isChecked ? "O" : "X");
+		}
+
+		tdText = checked.toString();
+		return tdText;
 	}
 
 	private String makeUrl(String baseUrl) {

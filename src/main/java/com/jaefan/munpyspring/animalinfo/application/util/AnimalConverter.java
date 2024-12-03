@@ -1,6 +1,7 @@
 package com.jaefan.munpyspring.animalinfo.application.util;
 
 import static com.jaefan.munpyspring.animalinfo.domain.model.AnimalType.*;
+import static com.jaefan.munpyspring.animalinfo.domain.model.ProtectionStatus.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.jaefan.munpyspring.animalinfo.domain.model.AnimalGender;
 import com.jaefan.munpyspring.animalinfo.domain.model.AnimalNeutered;
 import com.jaefan.munpyspring.animalinfo.domain.model.AnimalType;
-import com.jaefan.munpyspring.animalinfo.domain.model.ProtectionStatus;
+import com.jaefan.munpyspring.animalinfo.domain.model.ProtectionAnimal;
 import com.jaefan.munpyspring.animalinfo.domain.model.PublicAnimal;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
@@ -38,13 +39,17 @@ public class AnimalConverter {
 
 		AnimalGender gender = getAnimalGender(map);
 
-		AnimalNeutered isNeutered = getIsNeutered(map);
+		AnimalNeutered isNeutered = getIsNeutered(map, "중성화 여부");
 
 		boolean caution = hasRiskKeyword(map.get("특징"));
 
-		String dateString = map.get("공고기간").split("~")[1].trim();
-		LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_DATE);
-		LocalDateTime dueAt = date.atTime(23, 59, 59);
+		String rescueDateString = map.get("구조일").trim();
+		LocalDate rescueDate = LocalDate.parse(rescueDateString, DateTimeFormatter.ISO_DATE);
+		LocalDateTime rescuedAt = rescueDate.atStartOfDay();
+
+		String endDateString = map.get("공고기간").split("~")[1].trim();
+		LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ISO_DATE);
+		LocalDateTime dueAt = endDate.atTime(23, 59, 59);
 
 		String shelterName = map.get("관할 보호센터명").trim();
 		String telno = map.get("전화번호").trim();
@@ -64,8 +69,8 @@ public class AnimalConverter {
 			.isNeutered(isNeutered)
 			.caution(caution)
 			.noticeNo(map.get("공고번호").trim())
-			.protectionStatus(ProtectionStatus.ENTER)
-			.rescuedAt(LocalDateTime.now())
+			.protectionStatus(ENTER)
+			.rescuedAt(rescuedAt)
 			.rescuePlace(map.get("구조장소").trim())
 			.rescueReason(map.get("구조사유").trim())
 			.dueAt(dueAt)
@@ -73,8 +78,61 @@ public class AnimalConverter {
 			.build();
 	}
 
-	private AnimalNeutered getIsNeutered(Map<String, String> map) {
-		return switch (map.get("중성화 여부")) {
+	public ProtectionAnimal convertMapToProtection(Map<String, String> map) {
+		String typeString = map.get("품종");
+		AnimalType type = null;
+		if (typeString.contains("[개]")) {
+			type = DOG;
+		} else if (typeString.contains("[고양이]")) {
+			type = CAT;
+		}
+
+		if (type == null) {
+			return null;
+		}
+
+		AnimalGender gender = getAnimalGender(map);
+
+		AnimalNeutered isNeutered = getIsNeutered(map, "중성화");
+
+		boolean caution = hasRiskKeyword(map.get("특징(건강)"));
+
+		String[] physicalInfos = map.get("나이/체중").split("/");
+		String age = physicalInfos[0].trim();
+		double weight = Double.parseDouble(physicalInfos[1].replace("(Kg)", "").trim());
+
+		String shelterName = map.get("보호센터").trim();
+		String telno = map.get("보호센터연락처").trim();
+
+		Shelter newShelter = Shelter.builder()
+			.name(shelterName)
+			.owner(map.get("관할기관").trim())
+			.address(map.get("보호장소").trim())
+			.telno(telno)
+			.build();
+
+		Shelter shelter = shelterRepository.findByNameAndTelno(shelterName, telno).orElse(newShelter);
+
+		return ProtectionAnimal.builder()
+			.type(type)
+			.gender(gender)
+			.isNeutered(isNeutered)
+			.caution(caution)
+			.noticeNo(map.get("공고번호").trim())
+			.age(age)
+			.weight(weight)
+			.protectionStatus(ENTER)
+			.announcedAt(LocalDateTime.now())
+			.rescuePlace(map.get("발생장소").trim())
+			.rescueDetail(map.get("구조시 특징").trim())
+			.medicalCheck(map.get("건강검진"))
+			.vaccination(map.get("접종상태"))
+			.shelter(shelter)
+			.build();
+	}
+
+	private AnimalNeutered getIsNeutered(Map<String, String> map, String key) {
+		return switch (map.get(key)) {
 			case "예" -> AnimalNeutered.YES;
 			case "아니오" -> AnimalNeutered.NO;
 			default -> AnimalNeutered.UNKNOWN;
