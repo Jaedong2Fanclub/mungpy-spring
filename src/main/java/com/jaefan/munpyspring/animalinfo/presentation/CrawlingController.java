@@ -19,11 +19,12 @@ public class CrawlingController {
 
 	@Scheduled(cron = "0 50 11,23 * * ?")
 	public void crawl() {
-
+		crawlingService.crawl("public");
+		crawlingService.crawl("protection");
 	}
 
 	@GetMapping
-	public ResponseEntity<Void> crawlTest(String category) {
+	public ResponseEntity<Void> crawl(String category) {
 		crawlingService.crawl(category);
 
 		return ResponseEntity.ok().build();
