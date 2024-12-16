@@ -67,4 +67,8 @@ public class ProtectionAnimal {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
+
+	public void closeProtection() {
+		this.protectionStatus = ProtectionStatus.RELEASED;
+	}
 }

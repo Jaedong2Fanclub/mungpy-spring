@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.animalinfo.application.util.AnimalConverter;
+import com.jaefan.munpyspring.animalinfo.domain.model.CrawlingCategory;
 import com.jaefan.munpyspring.animalinfo.domain.model.ProtectionAnimal;
 import com.jaefan.munpyspring.animalinfo.domain.model.PublicAnimal;
 import com.jaefan.munpyspring.animalinfo.domain.repository.ProtectionAnimalRepository;
@@ -30,9 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CrawlingService {
 
 	public static final long DELAY_SECONDS = 1L;
-	private static final String URL = "https://www.animal.go.kr/front/awtis/";
-	private static final String PUBLIC = "public/publicList.do?menuNo=1000000055";
-	private static final String PROTECTION = "protection/protectionList.do?menuNo=1000000060";
+	private static final String BASE_URL = "https://www.animal.go.kr/front/awtis/";
+	private static final String PUBLIC_URL = "public/publicList.do?menuNo=1000000055";
+	private static final String PROTECTION_URL = "protection/protectionList.do?menuNo=1000000060";
+	private static final String RELEASE_URL = "public/publicAllList.do?menuNo=1000000064";
 
 	private final WebDriver webDriver;
 	private final AnimalConverter animalConverter;
@@ -40,9 +42,13 @@ public class CrawlingService {
 	private final ProtectionAnimalRepository protectionAnimalRepository;
 
 	@Transactional
-	public void crawl(String category) {
-		String baseUrl = URL;
-		baseUrl += category.equals("public") ? PUBLIC : PROTECTION;
+	public void crawl(CrawlingCategory category) {
+		String baseUrl = BASE_URL;
+		baseUrl += switch (category) {
+			case PUBLIC -> PUBLIC_URL;
+			case PROTECTION -> PROTECTION_URL;
+			case RELEASE -> RELEASE_URL;
+		};
 
 		String url = makeUrl(baseUrl);
 		webDriver.get(url);
@@ -72,50 +78,64 @@ public class CrawlingService {
 				removePopup();
 			}
 
-			Map<String, String> map = new HashMap<>();
-
-			List<WebElement> images = webDriver.findElements(By.className("photoArea"));
-			switch (category) {
-				case "public" -> {
-					extractTableInfo(map, "동물의 정보");
-					extractTableInfo(map, "구조 정보");
-					extractTableInfo(map, "동물보호센터 안내");
-
-					// TODO : GCP에 사진 업로드하는 로직 구현
-					// for (int j = 0; j < images.size(); j++) {
-					// 	String savePath = String.format("src/main/resources/images/%s(%d).jpg", map.get("공고번호"), j + 1);
-					// 	ImageDownloader.downloadImage(images.get(j).getAttribute("src"), savePath);
-					// }
-
-					PublicAnimal publicAnimal = animalConverter.convertMapToPublic(map);
-					if (publicAnimal != null) {
-						log.info(publicAnimal.toString());
-
-						boolean isAlreadyExist = publicAnimalRepository.findByNoticeNo(publicAnimal.getNoticeNo())
-							.isPresent();
-						if (!isAlreadyExist) {
-							publicAnimalRepository.save(publicAnimal);
-						}
-					}
-				}
-				case "protection" -> {
-					extractTableInfo(map);
-
-					ProtectionAnimal protectionAnimal = animalConverter.convertMapToProtection(map);
-					if (protectionAnimal != null) {
-						log.info(protectionAnimal.toString());
-
-						boolean isAlreadyExist = protectionAnimalRepository.findByNoticeNo(protectionAnimal.getNoticeNo())
-							.isPresent();
-						if (!isAlreadyExist) {
-							protectionAnimalRepository.save(protectionAnimal);
-						}
-					}
-				}
-			}
+			saveCrawledAnimal(category);
 
 			webDriver.navigate().back();
 			delay();
+		}
+	}
+
+	private void saveCrawledAnimal(CrawlingCategory category) {
+		Map<String, String> map = new HashMap<>();
+		List<WebElement> images = webDriver.findElements(By.className("photoArea"));
+
+		switch (category) {
+			case PUBLIC -> {
+				extractTableInfo(map, "동물의 정보");
+				extractTableInfo(map, "구조 정보");
+				extractTableInfo(map, "동물보호센터 안내");
+
+				// TODO : GCP에 사진 업로드하는 로직 구현
+
+				PublicAnimal publicAnimal = animalConverter.convertMapToPublic(map);
+				if (publicAnimal != null) {
+					log.info(publicAnimal.toString());
+
+					boolean isAlreadyExist = publicAnimalRepository.findByNoticeNo(publicAnimal.getNoticeNo())
+						.isPresent();
+					if (!isAlreadyExist) {
+						publicAnimalRepository.save(publicAnimal);
+					}
+				}
+			}
+			case PROTECTION -> {
+				extractTableInfo(map);
+
+				ProtectionAnimal protectionAnimal = animalConverter.convertMapToProtection(map);
+				if (protectionAnimal != null) {
+					log.info(protectionAnimal.toString());
+
+					publicAnimalRepository.findByNoticeNo(protectionAnimal.getNoticeNo())
+						.ifPresent(publicAnimal -> {
+							publicAnimal.closeAnnouncement();
+							// TODO : 실종 동물의 이미지를 보호 동물로 이전하는 로직 필요 (병합 후에)
+						});
+
+					boolean isAlreadyExist = protectionAnimalRepository.findByNoticeNo(
+							protectionAnimal.getNoticeNo())
+						.isPresent();
+					if (!isAlreadyExist) {
+						protectionAnimalRepository.save(protectionAnimal);
+					}
+				}
+			}
+			case RELEASE -> {
+				extractTableInfo(map);
+
+				String noticeNo = map.get("공고번호");
+				publicAnimalRepository.findByNoticeNo(noticeNo).ifPresent(PublicAnimal::closeProtection);
+				protectionAnimalRepository.findByNoticeNo(noticeNo).ifPresent(ProtectionAnimal::closeProtection);
+			}
 		}
 	}
 
@@ -151,7 +171,8 @@ public class CrawlingService {
 				String tdText = tdList.get(i).getText();
 
 				if (thText.equals("건강검진") || thText.equals("접종상태")) {
-					tdText = getCheckedString(tdList, i);
+					List<WebElement> inputList = tdList.get(i).findElements(By.tagName("input"));
+					tdText = getCheckedString(inputList);
 				}
 
 				map.put(thText, tdText);
@@ -159,18 +180,14 @@ public class CrawlingService {
 		});
 	}
 
-	private static String getCheckedString(List<WebElement> tdList, int i) {
-		String tdText;
-		List<WebElement> inputList = tdList.get(i).findElements(By.tagName("input"));
-
+	private static String getCheckedString(List<WebElement> inputList) {
 		StringBuilder checked = new StringBuilder();
 		for (WebElement input : inputList) {
 			boolean isChecked = input.getAttribute("checked") != null;
 			checked.append(isChecked ? "O" : "X");
 		}
 
-		tdText = checked.toString();
-		return tdText;
+		return checked.toString();
 	}
 
 	private String makeUrl(String baseUrl) {
