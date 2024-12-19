@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: mungpy_be
+  profiles:
+    active: dev
+
