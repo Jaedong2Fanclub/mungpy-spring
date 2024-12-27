@@ -14,7 +14,7 @@ import com.jaefan.munpyspring.animal.domain.model.CrawlingCategory;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/crawling")
+@RequestMapping("/api/crawling")
 @RequiredArgsConstructor
 public class AnimalCrawlingController {
 
