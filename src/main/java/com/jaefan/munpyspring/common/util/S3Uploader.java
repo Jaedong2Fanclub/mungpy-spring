@@ -20,7 +20,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
+// @Component
 public class S3Uploader {
 
 	private final AmazonS3 amazonS3;
