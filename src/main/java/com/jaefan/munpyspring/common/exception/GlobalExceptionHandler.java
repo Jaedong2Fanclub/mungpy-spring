@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import com.jaefan.munpyspring.user.presentation.exception.OAuthProcessingException;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 
@@ -47,5 +50,22 @@ public class GlobalExceptionHandler {
 		Map<String, String> errorMessages = new HashMap<>();
 		errorMessages.put("max-file-size exceeded", "업로드 가능 용량은 최대 10MB 입니다.");
 		return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(DuplicateEntityException.class)
+	public ResponseEntity<Map<String, String>> handleDuplicateEntityException(DuplicateEntityException ex) {
+		Map<String, String> errorMessages = new HashMap<>();
+		errorMessages.put("error", ex.getMessage());
+		return new ResponseEntity<>(errorMessages, HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(OAuthProcessingException.class)
+	public ResponseEntity<String> handleOAuthProcessingException(OAuthProcessingException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
 }
