@@ -1,5 +1,6 @@
 package com.jaefan.munpyspring.shelter.domain.model;
 
+import com.jaefan.munpyspring.region.domain.model.Region;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jaefan.munpyspring.user.domain.model.User;
@@ -12,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -49,6 +51,10 @@ public class Shelter {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "region_id")
+	private Region region;
 
 	public void hashPassword(PasswordEncoder passwordEncoder) {
 		user.hashPassword(passwordEncoder);

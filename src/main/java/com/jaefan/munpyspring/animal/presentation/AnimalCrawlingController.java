@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.animal.application.AnimalCrawlingService;
@@ -32,7 +33,7 @@ public class AnimalCrawlingController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Void> crawlTest(CrawlingCategory category) {
+	public ResponseEntity<Void> crawlTest(@RequestParam CrawlingCategory category) {
 		crawlingService.crawl(category);
 
 		return ResponseEntity.ok().build();

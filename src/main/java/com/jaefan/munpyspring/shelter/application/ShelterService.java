@@ -1,5 +1,6 @@
 package com.jaefan.munpyspring.shelter.application;
 
+import java.util.List;
 import java.io.IOException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,10 @@ public class ShelterService {
 	private final GoogleCloudStroageUploader googleCloudStroageUploader;
 
 	private final static String DIR_NAME = "SHELTER";
+
+	public List<Shelter> findByRegion(String upper, String lower) {
+		return shelterRepository.findByRegion(upper, lower);
+	}
 
 	@Transactional
 	public void signUpShelter(ShelterSignUpRequestDto shelterSignUpRequestDto) throws IOException {
