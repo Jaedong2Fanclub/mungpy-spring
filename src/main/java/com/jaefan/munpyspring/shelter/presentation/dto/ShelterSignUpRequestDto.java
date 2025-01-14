@@ -52,25 +52,25 @@ public class ShelterSignUpRequestDto {
 	@Size(min = 9, max = 13, message = "전화번호는 최소 8자리, 최대 11자리입니다.") // XXXX-XXXX (8자리), XXX-XXXX-XXXX (11자리)
 	private String telNo;
 
-	public static Shelter toShelter(ShelterSignUpRequestDto shelterSignUpRequestDto, String imageUrl) {
+	public Shelter toShelter(String imageUrl) {
 
 		User user = User.builder()
 			.uuid(UUID.randomUUID())
-			.nickname(shelterSignUpRequestDto.getNickname())
+			.nickname(nickname)
 			.profileImage(imageUrl)
 			.providerType(DEFAULT)
-			.email(shelterSignUpRequestDto.getEmail())
+			.email(email)
 			.status(ACTIVE)
-			.password(shelterSignUpRequestDto.getPassword())
+			.password(password)
 			.createdAt(LocalDateTime.now())
 			.role(SHELTER)
 			.build();
 
 		return Shelter.builder()
-			.name(shelterSignUpRequestDto.getNickname())
-			.address(shelterSignUpRequestDto.getAddress())
-			.owner(shelterSignUpRequestDto.getOwner())
-			.telNo(shelterSignUpRequestDto.getTelNo())
+			.name(nickname)
+			.address(address)
+			.owner(owner)
+			.telNo(telNo)
 			.user(user)
 			.build();
 	}

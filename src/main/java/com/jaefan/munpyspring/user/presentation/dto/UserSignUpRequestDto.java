@@ -1,5 +1,10 @@
 package com.jaefan.munpyspring.user.presentation.dto;
 
+import static com.jaefan.munpyspring.user.domain.model.Status.*;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jaefan.munpyspring.user.domain.model.Provider;
@@ -35,11 +40,14 @@ public class UserSignUpRequestDto {
 
 	public User toUser(String imageUrl, Provider providerType, Role role) {
 		return User.builder()
+			.uuid(UUID.randomUUID())
 			.nickname(nickname)
 			.profileImage(imageUrl)
 			.providerType(providerType)
 			.email(email)
+			.status(ACTIVE)
 			.password(password)
+			.createdAt(LocalDateTime.now())
 			.role(role)
 			.build();
 	}

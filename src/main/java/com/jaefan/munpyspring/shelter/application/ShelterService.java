@@ -45,7 +45,7 @@ public class ShelterService {
 			imageUrl = googleCloudStroageUploader.upload(shelterSignUpRequestDto.getProfileImage(), DIR_NAME);
 		}
 
-		Shelter shelter = ShelterSignUpRequestDto.toShelter(shelterSignUpRequestDto, imageUrl);
+		Shelter shelter = shelterSignUpRequestDto.toShelter(imageUrl);
 
 		shelter.hashPassword(passwordEncoder);
 
