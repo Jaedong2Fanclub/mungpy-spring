@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.jaefan.munpyspring.user.presentation.dto.OAuthToken;
+import com.jaefan.munpyspring.user.presentation.dto.OAuthTokenDto;
 
 /**
  * 카카오 인증 서버로 토큰 발급 요청을 보내는 객체
@@ -13,7 +13,7 @@ import com.jaefan.munpyspring.user.presentation.dto.OAuthToken;
 @FeignClient(name = "KakaoTokenFeignClient", url = "https://kauth.kakao.com")
 public interface KakaoTokenFeignClient {
 	@PostMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	OAuthToken getKakaoTokenByCode(
+	OAuthTokenDto getKakaoTokenByCode(
 		@RequestParam("grant_type") String grantType,
 		@RequestParam("client_id") String clientId,
 		@RequestParam("redirect_uri") String redirectUri,

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.common.util.CookieUtil;
 import com.jaefan.munpyspring.user.application.UserService;
-import com.jaefan.munpyspring.user.presentation.dto.RefreshTokenRequest;
+import com.jaefan.munpyspring.user.presentation.dto.RefreshTokenRequestDto;
 import com.jaefan.munpyspring.user.presentation.dto.UserSignUpRequestDto;
 
 import io.jsonwebtoken.JwtException;
@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,7 +31,7 @@ public class UserController {
 
 	private final CookieUtil cookieUtil;
 
-	@PostMapping("/user")
+	@PostMapping
 	public ResponseEntity<String> signUp(@Valid @ModelAttribute UserSignUpRequestDto userSignUpRequestDto) throws
 		IOException {
 		userService.signUp(userSignUpRequestDto);
@@ -39,7 +39,7 @@ public class UserController {
 	}
 
 	@PostMapping("/refresh")
-	public ResponseEntity<String> refreshAccessToken(@RequestBody RefreshTokenRequest refreshToken, HttpServletResponse response) {
+	public ResponseEntity<String> refreshAccessToken(@RequestBody RefreshTokenRequestDto refreshToken, HttpServletResponse response) {
 		try {
 			String newAccessToken = userService.refreshAccessToken(refreshToken.getRefreshToken());
 			Cookie accessCookie = cookieUtil.generateAccessCookie(newAccessToken);

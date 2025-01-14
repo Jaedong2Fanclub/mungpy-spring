@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jaefan.munpyspring.user.presentation.dto.OAuthAccountDto;
-import com.jaefan.munpyspring.user.presentation.dto.OAuthToken;
+import com.jaefan.munpyspring.user.presentation.dto.OAuthTokenDto;
 import com.jaefan.munpyspring.user.presentation.exception.OAuthProcessingException;
 import com.jaefan.munpyspring.user.presentation.feignClient.KakaoTokenFeignClient;
 import com.jaefan.munpyspring.user.presentation.feignClient.KakaoUserProfileFeignClient;
@@ -33,7 +33,7 @@ public class KakaoHttpClient {
 
 	private final KakaoUserProfileFeignClient kakaoUserProfileFeignClient; // 프로필 정보 요청을 보내는 FeignClient
 
-	public OAuthToken getTokenByCode(String code) {
+	public OAuthTokenDto getTokenByCode(String code) {
 		try {
 			return kakaoTokenFeignClient.getKakaoTokenByCode(
 				"authorization_code", // 고정값

@@ -74,7 +74,7 @@ public class UserService {
 
 		String imageUrl = googleCloudStroageUploader.upload(userSignUpRequestDto.getProfileImage(), DIR_NAME);
 
-		User user = UserSignUpRequestDto.toUser(userSignUpRequestDto, imageUrl, DEFAULT, USER);
+		User user = userSignUpRequestDto.toUser(imageUrl, DEFAULT, USER);
 
 		user.hashPassword(passwordEncoder);
 

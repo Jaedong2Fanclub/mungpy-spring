@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jaefan.munpyspring.user.presentation.dto.OAuthAccountDto;
-import com.jaefan.munpyspring.user.presentation.dto.OAuthToken;
+import com.jaefan.munpyspring.user.presentation.dto.OAuthTokenDto;
 import com.jaefan.munpyspring.user.presentation.exception.OAuthProcessingException;
 import com.jaefan.munpyspring.user.presentation.feignClient.NaverTokenFeignClient;
 import com.jaefan.munpyspring.user.presentation.feignClient.NaverUserProfileFeignClient;
@@ -36,7 +36,7 @@ public class NaverHttpClient {
 
 	private final NaverUserProfileFeignClient naverUserProfileFeignClient; // 프로필 정보 요청을 보내는 FeignClient
 
-	public OAuthToken getTokenByCode(String code, String state) {
+	public OAuthTokenDto getTokenByCode(String code, String state) {
 		try {
 			return naverTokenFeignClient.getNaverTokenByCode(
 				"authorization_code",

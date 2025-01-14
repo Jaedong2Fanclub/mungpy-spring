@@ -17,13 +17,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/shelters")
 @RequiredArgsConstructor
 public class ShelterController {
 
 	private final ShelterService shelterService;
 
-	@PostMapping("/shelter")
+	@PostMapping
 	public ResponseEntity<String> signUpShelter(@Valid @ModelAttribute ShelterSignUpRequestDto shelterSignUpRequestDto) throws IOException {
 		shelterService.signUpShelter(shelterSignUpRequestDto);
 		return new ResponseEntity<>("signUp Success", CREATED);

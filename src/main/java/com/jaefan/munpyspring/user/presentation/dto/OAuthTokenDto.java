@@ -6,7 +6,7 @@ import lombok.Getter;
  * OAuth Token으로 사용자 정보인 OAuthAccountDto를 받기 위해 필요한 토큰
  */
 @Getter
-public class OAuthToken {
+public class OAuthTokenDto {
 
 	private String token_type;
 
