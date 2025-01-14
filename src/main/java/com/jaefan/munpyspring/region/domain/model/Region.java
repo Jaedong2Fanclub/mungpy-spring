@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "regions")
+@Table(name = "region")
 @Getter
 @Builder
 @ToString

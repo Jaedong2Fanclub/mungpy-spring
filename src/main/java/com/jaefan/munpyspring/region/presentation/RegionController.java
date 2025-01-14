@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +26,11 @@ public class RegionController {
 		return ResponseEntity.ok(regionService.getAllRegions());
 	}
 
+	@Profile("dev")
 	@GetMapping("/init")
-	public ResponseEntity<Void> initRegions() throws IOException {
+	public ResponseEntity<String> initRegions() throws IOException {
 		regionService.initRegions();
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok("Region table successfully initialized");
 	}
 }
