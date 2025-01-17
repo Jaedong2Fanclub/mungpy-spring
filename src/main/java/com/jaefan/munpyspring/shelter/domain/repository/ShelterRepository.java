@@ -8,5 +8,7 @@ import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 
 public interface ShelterRepository extends JpaRepository<Shelter, Long>, ShelterRepositoryCustom {
 
+	Optional<Shelter> findByName(String name);
+
 	Optional<Shelter> findByNameAndTelNo(String name, String telno);
 }

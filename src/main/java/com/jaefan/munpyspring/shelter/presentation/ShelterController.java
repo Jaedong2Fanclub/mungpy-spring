@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.shelter.application.ShelterService;
-import com.jaefan.munpyspring.shelter.domain.model.Shelter;
+import com.jaefan.munpyspring.shelter.presentation.dto.ShelterResponseDto;
 import com.jaefan.munpyspring.shelter.presentation.dto.ShelterSearchDto;
 import com.jaefan.munpyspring.shelter.presentation.dto.ShelterSignUpRequestDto;
 
@@ -28,8 +28,8 @@ public class ShelterController {
 	private final ShelterService shelterService;
 
 	@GetMapping
-	public ResponseEntity<List<Shelter>> getShelters(@ModelAttribute ShelterSearchDto shelterSearchDto) {
-		List<Shelter> shelters = shelterService.findByRegion(shelterSearchDto.getUpper(), shelterSearchDto.getLower());
+	public ResponseEntity<List<ShelterResponseDto>> getShelters(@ModelAttribute ShelterSearchDto shelterSearchDto) {
+		List<ShelterResponseDto> shelters = shelterService.findByRegion(shelterSearchDto.getUpper(), shelterSearchDto.getLower());
 
 		return ResponseEntity.ok(shelters);
 	}
