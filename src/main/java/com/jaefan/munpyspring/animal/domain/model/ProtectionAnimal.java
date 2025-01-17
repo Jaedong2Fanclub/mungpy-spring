@@ -2,6 +2,7 @@ package com.jaefan.munpyspring.animal.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchResponseDto;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 
 import jakarta.persistence.CascadeType;
@@ -67,8 +68,33 @@ public class ProtectionAnimal {
 	private String vaccination;
 
 	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "breed_id")
+	private Breed breed;
+
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
+
+	public AnimalSearchResponseDto toResponseDto() {
+		String gender = switch (this.gender) {
+			case MALE -> "수컷";
+			case FEMALE -> "암컷";
+			case UNKNOWN -> "미상";
+		};
+
+		return AnimalSearchResponseDto.builder()
+			.gender(gender)
+			.age(this.age)
+			.isNeutered(this.isNeutered)
+			.weight(this.weight)
+			.rescuePlace(this.rescuePlace)
+			.rescueDetail(this.rescueDetail)
+			.breedName(this.breed.getBreedName())
+			.ownerName(this.shelter.getOwner())
+			.shelterName(this.shelter.getName())
+			.telno(this.shelter.getTelNo())
+			.build();
+	}
 
 	public void closeProtection() {
 		this.protectionStatus = ProtectionStatus.RELEASED;

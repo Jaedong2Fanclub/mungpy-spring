@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.jaefan.munpyspring.animal.domain.model.ProtectionAnimal;
 
 @Repository
-public interface ProtectionAnimalRepository extends JpaRepository<ProtectionAnimal, Long> {
+public interface ProtectionAnimalRepository extends JpaRepository<ProtectionAnimal, Long>, ProtectionAnimalRepositoryCustom {
 
 	Optional<ProtectionAnimal> findByNoticeNo(String name);
 }
