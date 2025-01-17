@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import com.jaefan.munpyspring.animal.domain.model.AnimalGender;
 import com.jaefan.munpyspring.animal.domain.model.AnimalType;
 import com.jaefan.munpyspring.animal.domain.model.ProtectionAnimal;
-import com.jaefan.munpyspring.shelter.domain.repository.AnimalSearchCondition;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

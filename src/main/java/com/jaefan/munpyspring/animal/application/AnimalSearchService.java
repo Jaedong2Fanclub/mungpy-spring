@@ -12,7 +12,7 @@ import com.jaefan.munpyspring.animal.domain.repository.ProtectionAnimalRepositor
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchRequestDto;
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchResponseDto;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
-import com.jaefan.munpyspring.shelter.domain.repository.AnimalSearchCondition;
+import com.jaefan.munpyspring.animal.domain.repository.AnimalSearchCondition;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
 
 import lombok.RequiredArgsConstructor;

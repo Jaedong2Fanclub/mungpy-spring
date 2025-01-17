@@ -1,4 +1,4 @@
-package com.jaefan.munpyspring.shelter.domain.repository;
+package com.jaefan.munpyspring.animal.domain.repository;
 
 import java.util.List;
 
