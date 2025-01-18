@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users", indexes = {
+@Table(indexes = {
 	@Index(name = "idx_uuid", columnList = "uuid"),
 	@Index(name = "idx_email", columnList = "email")
 })
@@ -40,21 +40,21 @@ public class User {
 	@Column(length = 50, nullable = false)
 	private String nickname;
 
-	@Column(name = "profile_image", length = 255)
+	@Column(name = "profile_image")
 	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "provider_type", nullable = false)
 	private Provider providerType;
 
-	@Column(length = 255, nullable = false)
+	@Column(nullable = false)
 	private String email;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Status status;
 
-	@Column(length = 255, nullable = false)
+	@Column(nullable = false)
 	private String password;
 
 	@Column(name = "created_at", nullable = false)

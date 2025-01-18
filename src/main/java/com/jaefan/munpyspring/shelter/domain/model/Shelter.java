@@ -1,8 +1,8 @@
 package com.jaefan.munpyspring.shelter.domain.model;
 
-import com.jaefan.munpyspring.region.domain.model.Region;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.user.domain.model.User;
 
 import jakarta.persistence.CascadeType;
@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "shelters")
 public class Shelter {
 	@Id
 	@Column(name = "shelter_id")
