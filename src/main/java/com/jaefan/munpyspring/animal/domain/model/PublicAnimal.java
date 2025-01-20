@@ -62,7 +62,7 @@ public class PublicAnimal {
 
 	private LocalDateTime dueAt;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
 

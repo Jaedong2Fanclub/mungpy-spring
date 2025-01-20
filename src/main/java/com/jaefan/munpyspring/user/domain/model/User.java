@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(indexes = {
+@Table(name = "users", indexes = {
 	@Index(name = "idx_uuid", columnList = "uuid"),
 	@Index(name = "idx_email", columnList = "email")
 })

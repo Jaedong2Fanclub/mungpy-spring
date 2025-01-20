@@ -65,11 +65,11 @@ public class ProtectionAnimal {
 
 	private String vaccination;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "breed_id")
 	private Breed breed;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
 
