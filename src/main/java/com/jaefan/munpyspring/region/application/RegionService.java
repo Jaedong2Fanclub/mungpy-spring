@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.region.domain.repository.RegionRepository;
@@ -26,6 +27,7 @@ public class RegionService {
 	/**
 	 * 데이터베이스에 행정구역에 대한 데이터가 없을 때 사용하는 일회용 메서드
 	 */
+	@Transactional
 	public void initRegions() throws IOException {
 		final String filePath = "src/main/resources/region.csv";
 
