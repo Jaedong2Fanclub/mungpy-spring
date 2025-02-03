@@ -1,6 +1,5 @@
 package com.jaefan.munpyspring.animal.domain.model;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,14 +20,14 @@ public class PublicAnimalImage {
 	private Long id;
 
 	@NotBlank
-	private String s3Url;
+	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "publicAnimal_id")
 	private PublicAnimal publicAnimal;
 
-	public PublicAnimalImage(String s3Url, PublicAnimal publicAnimal) {
-		this.s3Url = s3Url;
+	public PublicAnimalImage(String imageUrl, PublicAnimal publicAnimal) {
+		this.imageUrl = imageUrl;
 		this.publicAnimal = publicAnimal;
 	}
 }
