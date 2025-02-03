@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.user.domain.model.User;
 
@@ -52,7 +53,7 @@ public class ShelterSignUpRequestDto {
 	@Size(min = 9, max = 13, message = "전화번호는 최소 8자리, 최대 11자리입니다.") // XXXX-XXXX (8자리), XXX-XXXX-XXXX (11자리)
 	private String telNo;
 
-	public Shelter toShelter(String imageUrl) {
+	public Shelter toShelter(String imageUrl, Region region, Double latitude, Double longitude) {
 
 		User user = User.builder()
 			.uuid(UUID.randomUUID())
@@ -71,6 +72,9 @@ public class ShelterSignUpRequestDto {
 			.address(address)
 			.owner(owner)
 			.telNo(telNo)
+			.region(region)
+			.latitude(latitude)
+			.longitude(longitude)
 			.user(user)
 			.build();
 	}
