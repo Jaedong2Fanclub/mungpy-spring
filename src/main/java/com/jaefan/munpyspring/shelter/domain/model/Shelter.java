@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,9 +37,6 @@ public class Shelter {
 
 	@Column(length = 300, nullable = false)
 	private String address;
-
-	@NotBlank
-	private String owner;
 
 	@Column(length = 13, nullable = false)
 	private String telNo;

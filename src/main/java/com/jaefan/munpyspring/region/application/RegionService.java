@@ -36,8 +36,8 @@ public class RegionService {
 		while ((line = br.readLine()) != null) {
 			String[] values = line.split(",");
 			regionRepository.save(Region.builder()
-				.upper(values[0])
-				.lower(values[1])
+				.upper(values[0].trim())
+				.lower(values[1].trim())
 				.build());
 		}
 	}

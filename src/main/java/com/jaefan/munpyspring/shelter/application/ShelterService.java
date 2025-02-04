@@ -50,7 +50,6 @@ public class ShelterService {
 				return ShelterResponseDto.builder()
 					.name(shelter.getName())
 					.address(shelter.getAddress())
-					.owner(shelter.getOwner())
 					.telno(shelter.getTelNo())
 					.longitude(longitude)
 					.latitude(latitude)

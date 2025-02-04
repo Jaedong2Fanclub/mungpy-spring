@@ -70,7 +70,6 @@ public class ShelterSignUpRequestDto {
 		return Shelter.builder()
 			.name(nickname)
 			.address(address)
-			.owner(owner)
 			.telNo(telNo)
 			.region(region)
 			.latitude(latitude)
