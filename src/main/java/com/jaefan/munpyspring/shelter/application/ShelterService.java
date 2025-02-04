@@ -1,19 +1,22 @@
 package com.jaefan.munpyspring.shelter.application;
 
-import java.util.List;
 import java.io.IOException;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.common.exception.DuplicateEntityException;
 import com.jaefan.munpyspring.common.util.GoogleCloudStroageUploader;
+import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
+import com.jaefan.munpyspring.shelter.presentation.dto.Coordinate;
+import com.jaefan.munpyspring.shelter.presentation.dto.ShelterResponseDto;
 import com.jaefan.munpyspring.shelter.presentation.dto.ShelterSignUpRequestDto;
 import com.jaefan.munpyspring.user.domain.repository.UserRepository;
-import com.jaefan.munpyspring.shelter.presentation.dto.ShelterResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ShelterService {
 
+	@Value("${oauth2.kakao.api.client-id}")
+	private String clientId;
 	private final ShelterRepository shelterRepository;
 
 	private final UserRepository userRepository;
@@ -28,6 +33,10 @@ public class ShelterService {
 	private final PasswordEncoder passwordEncoder;
 
 	private final GoogleCloudStroageUploader googleCloudStroageUploader;
+
+	private final AddressToRegionConverter addressToRegionConverter; // 문자열 주소를 Region 엔티티로 라벨링하는 모듈
+
+	private final KakaoMapHttpClient kakaoMapHttpClient; // 문자열 주소에 대한 경,위도 좌표를 반환하는 카카오 Map API 클라이언트
 
 	private final static String DIR_NAME = "SHELTER";
 
@@ -66,7 +75,11 @@ public class ShelterService {
 			imageUrl = googleCloudStroageUploader.upload(shelterSignUpRequestDto.getProfileImage(), DIR_NAME);
 		}
 
-		Shelter shelter = shelterSignUpRequestDto.toShelter(imageUrl);
+		Region region = addressToRegionConverter.getRegionFromAddress(shelterSignUpRequestDto.getAddress());
+
+		Coordinate coordinate = kakaoMapHttpClient.getCoordinateByAddress(shelterSignUpRequestDto.getAddress());
+
+		Shelter shelter = shelterSignUpRequestDto.toShelter(imageUrl, region, coordinate.getLatitude(), coordinate.getLongitude());
 
 		shelter.hashPassword(passwordEncoder);
 

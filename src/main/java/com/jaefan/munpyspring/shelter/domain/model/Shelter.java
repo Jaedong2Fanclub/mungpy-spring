@@ -45,6 +45,10 @@ public class Shelter {
 	@Column(length = 13, nullable = false)
 	private String telNo;
 
+	private Double latitude;
+
+	private Double longitude;
+
 	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
