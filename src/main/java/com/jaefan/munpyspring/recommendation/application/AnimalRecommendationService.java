@@ -12,9 +12,11 @@ import java.util.List;
 public class AnimalRecommendationService {
 
 	private final BreedSearchService breedSearchService;
+	private final RequestCountService requestCountService;
 
-	public AnimalRecommendationService(BreedSearchService breedSearchService) {
+	public AnimalRecommendationService(BreedSearchService breedSearchService, RequestCountService requestCountService) {
 		this.breedSearchService = breedSearchService;
+		this.requestCountService = requestCountService;
 	}
 
 	public AnimalRecommendationDto getRecommendation(MultipartFile userImage, String type, List<String> userTraits) {
@@ -26,7 +28,8 @@ public class AnimalRecommendationService {
 
 		// TODO: 성향 처리
 
-		// TODO: 카운트 업
+		// 요청 카운트 증가
+		requestCountService.incrementRequestCount();
 
 		return AnimalRecommendationDto.builder()
 			.representativeImage("https://avatars.githubusercontent.com/u/92240138?v=4")
