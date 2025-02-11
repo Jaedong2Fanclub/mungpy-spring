@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,11 +45,23 @@ public class ShelterService {
 
 	private final static String DIR_NAME = "SHELTER";
 
-	public List<ShelterResponseDto> findByRegion(Map<String, String> regionMap) {
-		List<ShelterResponseDto> shelters = new ArrayList<>();
+	public List<ShelterResponseDto> findByRegion(Map<String, String> regionMap, Integer size, Integer page) {
+		List<ShelterResponseDto> shelterResponseDtos = new ArrayList<>();
+
+		if (page != null && page <= 0) {
+			throw new IllegalArgumentException("Page must be greater than 0");
+		}
 
 		if (regionMap.isEmpty()) {
-			return shelterRepository.findAll().stream()
+			List<Shelter> shelters;
+
+			if (size == null || page == null) {
+				shelters = shelterRepository.findAll();
+			} else {
+				shelters = shelterRepository.findAllWithPagination(PageRequest.of(page - 1, size));
+			}
+
+			return shelters.stream()
 				.map(this::createResposneDto)
 				.toList();
 		}
@@ -60,12 +73,17 @@ public class ShelterService {
 				lowers = Arrays.stream(regionMap.get(upper).split(",")).toList();
 			}
 
-			shelterRepository.findByRegion(upper, lowers).forEach(shelter ->
-				shelters.add(createResposneDto(shelter))
-			);
+			List<Shelter> shelters;
+			if (size == null || page == null) {
+				shelters = shelterRepository.findByRegion(upper, lowers);
+			} else {
+				shelters = shelterRepository.findByRegionWithPagination(upper, lowers, PageRequest.of(page - 1, size));
+			}
+
+			shelters.forEach(shelter -> shelterResponseDtos.add(createResposneDto(shelter)));
 		}
 
-		return shelters;
+		return shelterResponseDtos;
 	}
 
 	private ShelterResponseDto createResposneDto(Shelter shelter) {

@@ -31,8 +31,13 @@ public class ShelterController {
 	private final ShelterInitializeService shelterInitializeService;
 
 	@GetMapping
-	public ResponseEntity<List<ShelterResponseDto>> getShelters(@RequestParam Map<String, String> regionMap) {
-		List<ShelterResponseDto> shelters = shelterService.findByRegion(regionMap);
+	public ResponseEntity<List<ShelterResponseDto>> getShelters(@RequestParam Map<String, String> regionMap,
+		@RequestParam(required = false) Integer size, @RequestParam(required = false) Integer page) {
+
+		regionMap.remove("size");
+		regionMap.remove("page");
+
+		List<ShelterResponseDto> shelters = shelterService.findByRegion(regionMap, size, page);
 
 		return ResponseEntity.ok(shelters);
 	}
