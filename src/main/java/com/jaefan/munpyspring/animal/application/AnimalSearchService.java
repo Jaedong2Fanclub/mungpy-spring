@@ -1,5 +1,6 @@
 package com.jaefan.munpyspring.animal.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -34,7 +35,8 @@ public class AnimalSearchService {
 	public List<AnimalSearchResponseDto> findAnimals(AnimalSearchRequestDto animalSearchRequestDto) {
 		String upper = animalSearchRequestDto.getUpperRegion();
 		String lower = animalSearchRequestDto.getLowerRegion();
-		List<Long> shelterIds = shelterRepository.findByRegion(upper, lower).stream()
+
+		List<Long> shelterIds = shelterRepository.findByRegion(upper, List.of(lower)).stream()
 			.map(Shelter::getId)
 			.toList();
 

@@ -13,8 +13,7 @@ public class ShelterResponseDto {
 
 	private String name;
 	private String address;
-	private String owner;
 	private String telno;
-	private String longitude; // 경도
-	private String latitude; // 위도
+	private Double longitude; // 경도
+	private Double latitude; // 위도
 }

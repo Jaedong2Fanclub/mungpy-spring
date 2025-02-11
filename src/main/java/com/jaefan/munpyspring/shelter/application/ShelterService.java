@@ -1,7 +1,10 @@
 package com.jaefan.munpyspring.shelter.application;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +21,7 @@ import com.jaefan.munpyspring.shelter.presentation.dto.ShelterResponseDto;
 import com.jaefan.munpyspring.shelter.presentation.dto.ShelterSignUpRequestDto;
 import com.jaefan.munpyspring.user.domain.repository.UserRepository;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,22 +44,38 @@ public class ShelterService {
 
 	private final static String DIR_NAME = "SHELTER";
 
-	public List<ShelterResponseDto> findByRegion(String upper, String lower) {
-		return shelterRepository.findByRegion(upper, lower).stream()
-			.map(shelter -> {
-				// TODO : 주소로 좌표 받아오기 (Open Feign 써서)
-				String longitude = "";
-				String latitude = "";
+	public List<ShelterResponseDto> findByRegion(Map<String, String> regionMap) {
+		List<ShelterResponseDto> shelters = new ArrayList<>();
 
-				return ShelterResponseDto.builder()
-					.name(shelter.getName())
-					.address(shelter.getAddress())
-					.telno(shelter.getTelNo())
-					.longitude(longitude)
-					.latitude(latitude)
-					.build();
-			})
-			.toList();
+		if (regionMap.isEmpty()) {
+			return shelterRepository.findAll().stream()
+				.map(this::createResposneDto)
+				.toList();
+		}
+
+		for (String upper : regionMap.keySet()) {
+			List<String> lowers = null;
+
+			if (StringUtils.isNotBlank(regionMap.get(upper))) {
+				lowers = Arrays.stream(regionMap.get(upper).split(",")).toList();
+			}
+
+			shelterRepository.findByRegion(upper, lowers).forEach(shelter ->
+				shelters.add(createResposneDto(shelter))
+			);
+		}
+
+		return shelters;
+	}
+
+	private ShelterResponseDto createResposneDto(Shelter shelter) {
+		return ShelterResponseDto.builder()
+			.name(shelter.getName())
+			.address(shelter.getAddress())
+			.telno(shelter.getTelNo())
+			.longitude(shelter.getLongitude())
+			.latitude(shelter.getLatitude())
+			.build();
 	}
 
 	@Transactional

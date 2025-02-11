@@ -56,7 +56,6 @@ public class AnimalConverter {
 
 		Shelter newShelter = Shelter.builder()
 			.name(shelterName)
-			.owner(map.get("대표자").trim())
 			.address(map.get("주소").trim())
 			.telNo(telno)
 			.build();
@@ -106,7 +105,6 @@ public class AnimalConverter {
 
 		Shelter newShelter = Shelter.builder()
 			.name(shelterName)
-			.owner(map.get("관할기관").trim())
 			.address(map.get("보호장소").trim())
 			.telNo(telNo)
 			.build();

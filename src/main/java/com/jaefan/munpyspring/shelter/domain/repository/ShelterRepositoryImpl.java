@@ -20,11 +20,11 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<Shelter> findByRegion(String upper, String lower) {
+	public List<Shelter> findByRegion(String upper, List<String> lowers) {
 		return queryFactory
 			.selectFrom(shelter)
-			.join(shelter.region, region)
-			.where(upperEq(upper), lowerEq(lower))
+			.join(shelter.region, region).fetchJoin()
+			.where(upperEq(upper), lowerIn(lowers))
 			.fetch();
 	}
 
@@ -32,7 +32,7 @@ public class ShelterRepositoryImpl implements ShelterRepositoryCustom {
 		return upper != null ? region.upper.eq(upper) : null;
 	}
 
-	private BooleanExpression lowerEq(String lower) {
-		return lower != null ? region.lower.eq(lower) : null;
+	private BooleanExpression lowerIn(List<String> lowers) {
+		return lowers != null ? region.lower.in(lowers) : null;
 	}
 }
