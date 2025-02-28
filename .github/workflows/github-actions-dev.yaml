@@ -43,12 +43,7 @@ jobs:
         run: |
           cd /home/dev.mungpy/deploy/back
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
-
-      - name: Create GCP credentials file
-        run: |
-          sudo mkdir -p /app
-          echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > /app/gcp-key.json
-
+          echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > gcp-key.json
       - name: Redeploy
         run: |
           cd /home/dev.mungpy/deploy/back
