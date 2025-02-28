@@ -23,7 +23,7 @@ public class AppConfig {
 	 */
 	@Bean
 	public WebDriver webDriver() {
-		WebDriverManager.chromedriver().browserVersion("130.0.6723.92").setup();
+		WebDriverManager.chromedriver().setup(); // 버전 불일치로 수정 했습니다. 혹시라도 잘못 되면 노티 주세요!!
 
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--headless");             // GUI 없이 실행
