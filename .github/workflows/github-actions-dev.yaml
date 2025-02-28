@@ -44,6 +44,9 @@ jobs:
           cd /home/dev.mungpy/deploy/back
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
 
+      - name: Create deployment directory if not exists
+        run: mkdir -p /home/dev.mungpy/deploy/back
+
       - name: Create gcp json file
         id: create-json
         uses: jsdaniell/create-json@1.1.2
