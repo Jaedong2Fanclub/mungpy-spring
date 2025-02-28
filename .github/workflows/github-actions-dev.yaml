@@ -50,7 +50,7 @@ jobs:
         with:
           name: "gcp-key.json"
           json: ${{ secrets.GCP_CREDENTIALS_JSON }}
-          working-directory: /home/dev.mungpy/deploy/back
+          dir: /home/dev.mungpy/deploy/back
 
       - name: Redeploy
         run: |
