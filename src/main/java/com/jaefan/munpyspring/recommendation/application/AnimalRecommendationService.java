@@ -22,7 +22,7 @@ public class AnimalRecommendationService {
 	public AnimalRecommendationDto getRecommendation(MultipartFile userImage, String type, List<String> userTraits) {
 		AnimalRecommendationDto reslut = new AnimalRecommendationDto();
 		// AI 서버에서 추천 결과 받기
-		String recommendedBreed = breedSearchService.searchBreed(userImage, type);
+		String recommendedBreed = "eric"; // TODO:breedSearchService.searchBreed(userImage, type);
 		System.out.println("추천된 품종: " + recommendedBreed);
 		//TODO: 대표이미지 삽입
 
