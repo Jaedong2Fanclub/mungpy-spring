@@ -24,4 +24,6 @@ public class AnimalSearchRequestDto {
 	private AnimalType animalType;
 	private String breedType;
 	private AnimalGender gender;
+	private Integer size;
+	private Integer page;
 }

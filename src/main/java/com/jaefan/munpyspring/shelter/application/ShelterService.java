@@ -2,14 +2,17 @@ package com.jaefan.munpyspring.shelter.application;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.common.exception.DuplicateEntityException;
 import com.jaefan.munpyspring.common.util.GoogleCloudStroageUploader;
+import com.jaefan.munpyspring.common.util.PageableConst;
 import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
@@ -40,23 +43,38 @@ public class ShelterService {
 
 	private final static String DIR_NAME = "SHELTER";
 
-	public List<ShelterResponseDto> findByRegion(String upper, String lower) {
-		return shelterRepository.findByRegion(upper, lower).stream()
-			.map(shelter -> {
-				// TODO : 주소로 좌표 받아오기 (Open Feign 써서)
-				String longitude = "";
-				String latitude = "";
+	public List<ShelterResponseDto> findByRegion(Map<String, String> regionMap, Integer size, Integer page) {
+		List<Shelter> shelters;
+		if (page != null) {
+			if (size == null) {
+				size = PageableConst.DEFAULT_SIZE;
+			}
 
-				return ShelterResponseDto.builder()
-					.name(shelter.getName())
-					.address(shelter.getAddress())
-					.owner(shelter.getOwner())
-					.telno(shelter.getTelNo())
-					.longitude(longitude)
-					.latitude(latitude)
-					.build();
-			})
+			if (page <= 0) {
+				throw new IllegalArgumentException("Page must be greater than 0");
+			}
+			if (size <= 0) {
+				throw new IllegalArgumentException("Size must be greater than 0");
+			}
+
+			shelters = shelterRepository.findByRegionWithPagination(regionMap, PageRequest.of(page - 1, size));
+		} else {
+			shelters = shelterRepository.findByRegion(regionMap);
+		}
+
+		return shelters.stream()
+			.map(this::createResposneDto)
 			.toList();
+	}
+
+	private ShelterResponseDto createResposneDto(Shelter shelter) {
+		return ShelterResponseDto.builder()
+			.name(shelter.getName())
+			.address(shelter.getAddress())
+			.telno(shelter.getTelNo())
+			.longitude(shelter.getLongitude())
+			.latitude(shelter.getLatitude())
+			.build();
 	}
 
 	@Transactional

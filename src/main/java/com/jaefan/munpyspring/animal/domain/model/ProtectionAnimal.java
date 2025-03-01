@@ -88,7 +88,6 @@ public class ProtectionAnimal {
 			.rescuePlace(this.rescuePlace)
 			.rescueDetail(this.rescueDetail)
 			.breedName(this.breed.getBreedName())
-			.ownerName(this.shelter.getOwner())
 			.shelterName(this.shelter.getName())
 			.telno(this.shelter.getTelNo())
 			.build();

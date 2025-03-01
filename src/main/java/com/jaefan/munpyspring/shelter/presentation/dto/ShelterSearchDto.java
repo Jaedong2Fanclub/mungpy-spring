@@ -1,5 +1,7 @@
 package com.jaefan.munpyspring.shelter.presentation.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,6 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class ShelterSearchDto {
-	private String upper;
-	private String lower;
+	private List<String> uppers;
+	private List<String> lowers;
 }
