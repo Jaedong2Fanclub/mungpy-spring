@@ -1,19 +1,21 @@
 package com.jaefan.munpyspring.animal.application;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.jaefan.munpyspring.animal.domain.model.AnimalType;
 import com.jaefan.munpyspring.animal.domain.model.Breed;
 import com.jaefan.munpyspring.animal.domain.model.ProtectionAnimal;
+import com.jaefan.munpyspring.animal.domain.repository.AnimalSearchCondition;
 import com.jaefan.munpyspring.animal.domain.repository.BreedRepository;
 import com.jaefan.munpyspring.animal.domain.repository.ProtectionAnimalRepository;
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchRequestDto;
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchResponseDto;
+import com.jaefan.munpyspring.common.util.PageableConst;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
-import com.jaefan.munpyspring.animal.domain.repository.AnimalSearchCondition;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,20 @@ public class AnimalSearchService {
 			.breedType(animalSearchRequestDto.getBreedType())
 			.gender(animalSearchRequestDto.getGender())
 			.build();
+
+		Integer size = animalSearchRequestDto.getSize();
+		Integer page = animalSearchRequestDto.getPage();
+		if (page != null) {
+			if (size == null) {
+				size = PageableConst.DEFAULT_SIZE;
+			}
+
+			Pageable pageable = PageRequest.of(page - 1, size);
+
+			return protectionAnimalRepository.findProtectionAnimalsWithPagination(animalSearchCondition, pageable).stream()
+				.map(ProtectionAnimal::toResponseDto)
+				.toList();
+		}
 
 		return protectionAnimalRepository.findProtectionAnimals(animalSearchCondition).stream()
 			.map(ProtectionAnimal::toResponseDto)

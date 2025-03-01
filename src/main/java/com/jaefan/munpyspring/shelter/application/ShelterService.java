@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jaefan.munpyspring.common.exception.DuplicateEntityException;
 import com.jaefan.munpyspring.common.util.GoogleCloudStroageUploader;
+import com.jaefan.munpyspring.common.util.PageableConst;
 import com.jaefan.munpyspring.region.domain.model.Region;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
@@ -74,10 +75,14 @@ public class ShelterService {
 			}
 
 			List<Shelter> shelters;
-			if (size == null || page == null) {
-				shelters = shelterRepository.findByRegion(upper, lowers);
-			} else {
+			if (page != null) {
+				if (size == null) {
+					size = PageableConst.DEFAULT_SIZE;
+				}
+
 				shelters = shelterRepository.findByRegionWithPagination(upper, lowers, PageRequest.of(page - 1, size));
+			} else {
+				shelters = shelterRepository.findByRegion(upper, lowers);
 			}
 
 			shelters.forEach(shelter -> shelterResponseDtos.add(createResposneDto(shelter)));
