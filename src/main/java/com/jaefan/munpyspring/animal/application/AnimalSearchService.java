@@ -1,6 +1,8 @@
 package com.jaefan.munpyspring.animal.application;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +40,10 @@ public class AnimalSearchService {
 		String upper = animalSearchRequestDto.getUpperRegion();
 		String lower = animalSearchRequestDto.getLowerRegion();
 
-		List<Long> shelterIds = shelterRepository.findByRegion(upper, List.of(lower)).stream()
+		Map<String, String> regionMap = new HashMap<>();
+		regionMap.put(upper, lower);
+
+		List<Long> shelterIds = shelterRepository.findByRegion(regionMap).stream()
 			.map(Shelter::getId)
 			.toList();
 
@@ -54,6 +59,13 @@ public class AnimalSearchService {
 		if (page != null) {
 			if (size == null) {
 				size = PageableConst.DEFAULT_SIZE;
+			}
+
+			if (page <= 0) {
+				throw new IllegalArgumentException("Page must be greater than 0");
+			}
+			if (size <= 0) {
+				throw new IllegalArgumentException("Size must be greater than 0");
 			}
 
 			Pageable pageable = PageRequest.of(page - 1, size);

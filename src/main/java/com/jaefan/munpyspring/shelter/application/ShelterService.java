@@ -1,8 +1,6 @@
 package com.jaefan.munpyspring.shelter.application;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +21,6 @@ import com.jaefan.munpyspring.shelter.presentation.dto.ShelterResponseDto;
 import com.jaefan.munpyspring.shelter.presentation.dto.ShelterSignUpRequestDto;
 import com.jaefan.munpyspring.user.domain.repository.UserRepository;
 
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,48 +44,27 @@ public class ShelterService {
 	private final static String DIR_NAME = "SHELTER";
 
 	public List<ShelterResponseDto> findByRegion(Map<String, String> regionMap, Integer size, Integer page) {
-		List<ShelterResponseDto> shelterResponseDtos = new ArrayList<>();
-
-		if (page != null && page <= 0) {
-			throw new IllegalArgumentException("Page must be greater than 0");
-		}
-
-		if (regionMap.isEmpty()) {
-			List<Shelter> shelters;
-
-			if (size == null || page == null) {
-				shelters = shelterRepository.findAll();
-			} else {
-				shelters = shelterRepository.findAllWithPagination(PageRequest.of(page - 1, size));
+		List<Shelter> shelters;
+		if (page != null) {
+			if (size == null) {
+				size = PageableConst.DEFAULT_SIZE;
 			}
 
-			return shelters.stream()
-				.map(this::createResposneDto)
-				.toList();
-		}
-
-		for (String upper : regionMap.keySet()) {
-			List<String> lowers = null;
-
-			if (StringUtils.isNotBlank(regionMap.get(upper))) {
-				lowers = Arrays.stream(regionMap.get(upper).split(",")).toList();
+			if (page <= 0) {
+				throw new IllegalArgumentException("Page must be greater than 0");
+			}
+			if (size <= 0) {
+				throw new IllegalArgumentException("Size must be greater than 0");
 			}
 
-			List<Shelter> shelters;
-			if (page != null) {
-				if (size == null) {
-					size = PageableConst.DEFAULT_SIZE;
-				}
-
-				shelters = shelterRepository.findByRegionWithPagination(upper, lowers, PageRequest.of(page - 1, size));
-			} else {
-				shelters = shelterRepository.findByRegion(upper, lowers);
-			}
-
-			shelters.forEach(shelter -> shelterResponseDtos.add(createResposneDto(shelter)));
+			shelters = shelterRepository.findByRegionWithPagination(regionMap, PageRequest.of(page - 1, size));
+		} else {
+			shelters = shelterRepository.findByRegion(regionMap);
 		}
 
-		return shelterResponseDtos;
+		return shelters.stream()
+			.map(this::createResposneDto)
+			.toList();
 	}
 
 	private ShelterResponseDto createResposneDto(Shelter shelter) {
