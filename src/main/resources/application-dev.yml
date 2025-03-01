@@ -1,0 +1,35 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${DEV_DATABASE_URL}
+    username: ${DEV_DATABASE_USERNAME}
+    password: ${DEV_DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: ${DEV_GCP_STORAGE_CREDENTIALS_LOCATION}
+        project-id: ${DEV_GCP_PROJECT_ID}
+        bucket: ${DEV_GCP_BUCKET}
+  jwt:
+    secret: ${DEV_JWT_SECRET}
+
+oauth2:
+  kakao:
+    api:
+      client-id: ${DEV_OAUTH2_KAKAO_CLIENT_ID}
+      redirect-uri: ${DEV_OAUTH2_KAKAO_REDIRECT_URI}
+  naver:
+    api:
+      client-id: ${DEV_OAUTH2_NAVER_CLIENT_ID}
+      client-secret: ${DEV_OAUTH2_NAVER_CLIENT_SECRET}
+      redirect-uri: ${DEV_OAUTH2_NAVER_REDIRECT_URI}
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
