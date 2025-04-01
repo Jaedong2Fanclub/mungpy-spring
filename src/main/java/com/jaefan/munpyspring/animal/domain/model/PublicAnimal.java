@@ -2,6 +2,7 @@ package com.jaefan.munpyspring.animal.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 
@@ -76,14 +77,13 @@ public class PublicAnimal {
 
 	public PublicAnimal(
 		AnimalType type, AnimalGender gender, AnimalNeutered isNeutered, Boolean caution,
-		String noticeNo, LocalDateTime rescuedAt, String rescuePlace,
-		String rescueReason, Shelter shelter, Breed breed
+		LocalDateTime rescuedAt, String rescuePlace, String rescueReason, Shelter shelter, Breed breed
 	) {
 		this.type = type;
 		this.gender = gender;
 		this.isNeutered = isNeutered;
 		this.caution = caution;
-		this.noticeNo = noticeNo;
+		this.noticeNo = UUID.randomUUID().toString();
 		this.protectionStatus = ProtectionStatus.POSTED;
 		this.rescuedAt = rescuedAt;
 		this.rescuePlace = rescuePlace;
