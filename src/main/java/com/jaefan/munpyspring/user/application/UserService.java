@@ -96,4 +96,8 @@ public class UserService {
 	public String refreshAccessToken(String refreshToken) {
 		return jwtProvider.refreshAccessToken(refreshToken);
 	}
+
+	public Boolean exists(String email) {
+		return userRepository.existsByEmail(email);
+	}
 }
