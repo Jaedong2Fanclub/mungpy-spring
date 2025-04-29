@@ -1,6 +1,7 @@
 package com.jaefan.munpyspring.animal.domain.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalSearchResponseDto;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
@@ -10,15 +11,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
@@ -72,6 +76,10 @@ public class ProtectionAnimal {
 	@ManyToOne
 	@JoinColumn(name = "shelter_id")
 	private Shelter shelter;
+
+	@Setter
+	@OneToMany(mappedBy = "protectionAnimal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<ProtectionAnimalImage> protectionAnimalImages;
 
 	public AnimalSearchResponseDto toResponseDto() {
 		String gender = switch (this.gender) {

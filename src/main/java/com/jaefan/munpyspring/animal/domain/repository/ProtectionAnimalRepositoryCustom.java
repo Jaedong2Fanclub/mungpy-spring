@@ -11,4 +11,6 @@ public interface ProtectionAnimalRepositoryCustom {
 	List<ProtectionAnimal> findProtectionAnimals(AnimalSearchCondition searchCondition);
 
 	List<ProtectionAnimal> findProtectionAnimalsWithPagination(AnimalSearchCondition searchCondition, Pageable pageable);
+
+	List<String> findImagesByBreedName(String breedName);
 }

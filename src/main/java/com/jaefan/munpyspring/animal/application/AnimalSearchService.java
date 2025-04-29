@@ -20,6 +20,7 @@ import com.jaefan.munpyspring.common.util.PageableConst;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
 import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -78,5 +79,15 @@ public class AnimalSearchService {
 		return protectionAnimalRepository.findProtectionAnimals(animalSearchCondition).stream()
 			.map(ProtectionAnimal::toResponseDto)
 			.toList();
+	}
+
+	public List<String> findImages(String breedName) {
+		List<String> images = protectionAnimalRepository.findImagesByBreedName(breedName);
+
+		if (images.isEmpty()) {
+			throw new EntityNotFoundException("No image found for breed - " + breedName);
+		}
+
+		return images;
 	}
 }

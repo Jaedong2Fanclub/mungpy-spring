@@ -2,6 +2,7 @@ package com.jaefan.munpyspring.animal.domain.repository;
 
 import static com.jaefan.munpyspring.animal.domain.model.QBreed.*;
 import static com.jaefan.munpyspring.animal.domain.model.QProtectionAnimal.*;
+import static com.jaefan.munpyspring.animal.domain.model.QProtectionAnimalImage.*;
 import static com.jaefan.munpyspring.shelter.domain.model.QShelter.*;
 
 import java.util.List;
@@ -80,5 +81,16 @@ public class ProtectionAnimalRepositoryImpl implements ProtectionAnimalRepositor
 
 	private BooleanExpression genderEq(AnimalGender gender) {
 		return gender != null ? protectionAnimal.gender.eq(gender) : null;
+	}
+
+	@Override
+	public List<String> findImagesByBreedName(String breedName) {
+		return queryFactory
+			.select(protectionAnimalImage.imageUrl)
+			.from(protectionAnimal)
+			.join(protectionAnimal.breed, breed)
+			.join(protectionAnimal.protectionAnimalImages, protectionAnimalImage)
+			.where(breed.breedName.eq(breedName))
+			.fetch();
 	}
 }
