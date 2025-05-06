@@ -62,6 +62,8 @@ public class WebSecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(POST, "/api/animal").hasRole("SHELTER") // 동물 등록은 보호소만 가능.
+				.requestMatchers("/api/chat/rooms/**").authenticated() // 특정 채팅방 입장은 인증 필요
+				.requestMatchers("/api/chat/animals/**").authenticated() // 보호 동물 채팅방 입장 시 인증 필요
 				.anyRequest()
 				.permitAll())
 			.formLogin(form -> form.disable())
