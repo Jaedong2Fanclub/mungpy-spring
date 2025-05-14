@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.animal.application.AnimalRegistrationService;
@@ -37,17 +39,25 @@ public class AnimalController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> registerAnimal(
-		@Valid @ModelAttribute AnimalRegistrationDto animalRegistrationDto) throws
-		IOException {
+	public ResponseEntity<String> registerAnimal(@Valid @ModelAttribute AnimalRegistrationDto animalRegistrationDto)
+		throws IOException {
+
 		animalRegistrationService.regist(animalRegistrationDto);
+
 		return new ResponseEntity<>("Registration Success", HttpStatus.CREATED);
 	}
 
 	@GetMapping("/breeds")
-	public ResponseEntity<List<String>> getBreeds(AnimalType animalType) {
+	public ResponseEntity<List<String>> getBreeds(@RequestParam AnimalType animalType) {
 		List<String> breedNames = animalSearchService.findBreedNames(animalType);
 
 		return ResponseEntity.ok(breedNames);
+	}
+
+	@GetMapping("/breeds/{breedName}/images")
+	public ResponseEntity<List<String>> getImagesByBreeds(@PathVariable String breedName) {
+		List<String> imagePaths = animalSearchService.findImages(breedName);
+
+		return ResponseEntity.ok(imagePaths);
 	}
 }
