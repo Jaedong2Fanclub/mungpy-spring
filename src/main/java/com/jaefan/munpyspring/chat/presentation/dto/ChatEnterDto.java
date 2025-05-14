@@ -13,12 +13,4 @@ public class ChatEnterDto {
 	private Long userId;
 	private Long roomId;
 	private List<ChatMessageDto> messages;
-
-	public static ChatEnterDto init(Long userId, Long roomId, List<ChatMessageDto> messages) {
-		return ChatEnterDto.builder()
-			.userId(userId)
-			.roomId(roomId)
-			.messages(messages)
-			.build();
-	}
 }

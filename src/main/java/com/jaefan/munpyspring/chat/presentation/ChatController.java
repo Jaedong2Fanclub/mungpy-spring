@@ -30,7 +30,7 @@ public class ChatController {
 		Long userId = getCurrentUserId();
 		List<ChatMessageDto> messages = chatService.readInfiniteScroll(roomId, null);
 
-		return ChatEnterDto.init(userId, roomId, messages);
+		return new ChatEnterDto(userId, roomId, messages);
 	}
 
 	@GetMapping("/animals/{animalId}")

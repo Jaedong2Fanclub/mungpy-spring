@@ -45,14 +45,14 @@ public class ChatService {
 		Optional<ChatRoom> chatRoom = chatRoomRepository.findByUserIdAndProtectionAnimalId(userId, animalId);
 		if (chatRoom.isPresent()) {
 			Long roomId = chatRoom.get().getId();
-			return ChatEnterDto.init(userId, roomId, readInfiniteScroll(roomId, null));
+			return new ChatEnterDto(userId, roomId, readInfiniteScroll(roomId, null));
 		} else {
 			ProtectionAnimal protectionAnimal = protectionAnimalRepository.findById(animalId)
 				.orElseThrow(() -> new EntityNotFoundException());
 			User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException());
 			ChatRoom newChatRoom = ChatRoom.create(protectionAnimal, user, protectionAnimal.getShelter());
 			chatRoomRepository.save(newChatRoom);
-			return ChatEnterDto.init(userId, newChatRoom.getId(), Collections.emptyList());
+			return new ChatEnterDto(userId, newChatRoom.getId(), Collections.emptyList());
 		}
 	}
 

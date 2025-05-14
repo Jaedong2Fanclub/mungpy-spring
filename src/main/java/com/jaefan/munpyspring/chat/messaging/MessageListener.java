@@ -1,24 +1,19 @@
 package com.jaefan.munpyspring.chat.messaging;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.jaefan.munpyspring.chat.domain.ChatMessage;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class MessageListener {
+	private final SimpMessagingTemplate messagingTemplate;
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
-
-	@Autowired
-	private RabbitConstant rabbitConstant;
-
-	public MessageListener(SimpMessagingTemplate messagingTemplate) {
-		this.messagingTemplate = messagingTemplate;
-	}
+	private final RabbitConstant rabbitConstant;
 
 	@RabbitListener(queues = "#{rabbitConstant.getQueueName()}")
 	public void receiveMessage(ChatMessage message) {
