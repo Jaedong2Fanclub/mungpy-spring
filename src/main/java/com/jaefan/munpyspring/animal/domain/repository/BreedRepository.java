@@ -1,6 +1,7 @@
 package com.jaefan.munpyspring.animal.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,4 +12,6 @@ public interface BreedRepository extends JpaRepository<Breed, Long> {
 
 	@Query("SELECT b FROM Breed b WHERE :family IS NULL OR b.family = :family")
 	List<Breed> findByFamily(String family);
+
+	Optional<Breed> findByBreedName(String name);
 }

@@ -5,10 +5,12 @@ import static org.springframework.http.HttpStatus.*;
 import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jaefan.munpyspring.common.util.CookieUtil;
@@ -60,5 +62,13 @@ public class UserController {
 		response.addCookie(refreshTokenCookie);
 
 		return new ResponseEntity<>("Logout success", OK);
+	}
+
+	@GetMapping("/exists")
+	public ResponseEntity<Void> exists(@RequestParam String email) {
+		if (!userService.exists(email)) {
+			return new ResponseEntity<>(OK);
+		}
+		return new ResponseEntity<>(CONFLICT);
 	}
 }

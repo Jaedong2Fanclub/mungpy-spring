@@ -3,6 +3,8 @@ package com.jaefan.munpyspring.animal.application;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,17 +13,26 @@ import com.jaefan.munpyspring.animal.domain.model.AnimalType;
 import com.jaefan.munpyspring.animal.domain.model.Breed;
 import com.jaefan.munpyspring.animal.domain.model.PublicAnimal;
 import com.jaefan.munpyspring.animal.domain.model.PublicAnimalImage;
+import com.jaefan.munpyspring.animal.domain.repository.BreedRepository;
 import com.jaefan.munpyspring.animal.domain.repository.PublicAnimalRepository;
 import com.jaefan.munpyspring.animal.presentation.dto.AnimalRegistrationDto;
 import com.jaefan.munpyspring.common.util.GoogleCloudStroageUploader;
+import com.jaefan.munpyspring.security.domain.model.CustomUserDetails;
 import com.jaefan.munpyspring.shelter.domain.model.Shelter;
+import com.jaefan.munpyspring.shelter.domain.repository.ShelterRepository;
+import com.jaefan.munpyspring.user.domain.model.User;
+import com.jaefan.munpyspring.user.domain.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AnimalRegistrationService {
 	private final PublicAnimalRepository publicAnimalRepository;
+	private final BreedRepository breedRepository;
+	private final ShelterRepository shelterRepository;
+	private final UserRepository userRepository;
 	private final GoogleCloudStroageUploader GoogleCloudStroageUploader;
 
 	@Transactional
@@ -37,8 +48,9 @@ public class AnimalRegistrationService {
 
 		List<String> imageUrls = GoogleCloudStroageUploader.upload(animalRegistrationImages, typeString);
 
-		Shelter shelter = null; // Spring Context에서 Authentication 객체를 꺼내 현재 접속 보호소를 식별하는 코드 들어갈 자리
-		Breed breed = null; // AI 서버에 동물 이미지 또는 ImageUrl 전송 후 판정 품종 받아오는 코드 들어갈 자리 (새로운 품종 시 품종 신규 등록 필요)
+		Shelter shelter = getCurrentShelter(); // Spring Context에서 Authentication 객체를 꺼내 현재 접속 보호소를 식별
+		Breed breed = breedRepository.findByBreedName(animalRegistrationDto.getBreedName())
+			.orElseThrow(() -> new EntityNotFoundException("breed not found has name: " + animalRegistrationDto.getBreedName()));
 
 		PublicAnimal publicAnimal = AnimalRegistrationDto.toEntity(animalRegistrationDto, shelter, breed);
 		List<PublicAnimalImage> publicAnimalImages = imageUrls.stream()
@@ -47,5 +59,19 @@ public class AnimalRegistrationService {
 
 		publicAnimal.setPublicAnimalImages(publicAnimalImages); // setter로 동물 엔티티에 이미지 설정.
 		publicAnimalRepository.save(publicAnimal);
+	}
+
+	private Shelter getCurrentShelter() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+			CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+			String email = userDetails.getEmail();
+			User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new EntityNotFoundException("user not found has email: " + email));
+			return shelterRepository.findByUser(user)
+				.orElseThrow(() -> new EntityNotFoundException("user is not shelter"));
+		}
+		throw new EntityNotFoundException("authentication not found");
 	}
 }
