@@ -27,4 +27,14 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
 		nativeQuery = true
 	)
 	List<ChatMessage> readInfiniteScroll(Long roomId, Long lastMessageId, Long limit);
+
+	@Query(
+		value = "select * "
+			+ "from chat_message "
+			+ "where room_id = :roomId "
+			+ "order by chat_message_id desc "
+			+ "limit :limit",
+		nativeQuery = true
+	)
+	ChatMessage readLastMessage(Long roomId, Long limit);
 }

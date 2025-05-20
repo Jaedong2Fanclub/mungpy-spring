@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jaefan.munpyspring.chat.application.ChatService;
 import com.jaefan.munpyspring.chat.presentation.dto.ChatEnterDto;
 import com.jaefan.munpyspring.chat.presentation.dto.ChatMessageDto;
+import com.jaefan.munpyspring.chat.presentation.dto.ChatRoomDto;
 import com.jaefan.munpyspring.user.domain.model.User;
 import com.jaefan.munpyspring.user.domain.repository.UserRepository;
 
@@ -31,6 +32,11 @@ public class ChatController {
 		List<ChatMessageDto> messages = chatService.readInfiniteScroll(roomId, null);
 
 		return new ChatEnterDto(userId, roomId, messages);
+	}
+
+	@GetMapping("/rooms")
+	public List<ChatRoomDto> getRooms() {
+		return chatService.findRooms(getCurrentUserId());
 	}
 
 	@GetMapping("/animals/{animalId}")
