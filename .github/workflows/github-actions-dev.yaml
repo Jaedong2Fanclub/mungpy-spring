@@ -41,11 +41,11 @@ jobs:
     steps:
       - name: Set .env file
         run: |
-          cd /home/dev.mungpy/deploy/back
+          cd /home/mungpy.server/deploy/back
           echo "${{ secrets.ENV_FILE_DEV }}" > .env
 
       - name: Create deployment directory if not exists
-        run: mkdir -p /home/dev.mungpy/deploy/back
+        run: mkdir -p /home/mungpy.server/deploy/back
 
       - name: Create gcp json file in workspace
         id: create-json
@@ -55,14 +55,14 @@ jobs:
           json: ${{ secrets.GCP_CREDENTIALS_JSON }}
 
       - name: Remove old gcp-key.json if exists
-        run: sudo rm -rf /home/dev.mungpy/deploy/back/gcp-key.json
+        run: sudo rm -rf /home/mungpy.server/deploy/back/gcp-key.json
 
       - name: Move gcp json file to deployment directory
-        run: mv gcp-key.json /home/dev.mungpy/deploy/back/gcp-key.json
+        run: mv gcp-key.json /home/mungpy.server/deploy/back/gcp-key.json
 
       - name: Redeploy
         run: |
-          cd /home/dev.mungpy/deploy/back
+          cd /home/mungpy.server/deploy/back
           sudo docker image prune -a -f
           sudo docker-compose -f docker-compose.back.yaml down
           sudo docker-compose -f docker-compose.back.yaml pull
