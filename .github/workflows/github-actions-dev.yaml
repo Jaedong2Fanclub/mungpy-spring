@@ -64,6 +64,6 @@ jobs:
         run: |
           cd /home/mungpy.server/deploy/back
           sudo docker image prune -a -f
-          sudo docker-compose -f docker-compose.back.yaml down
-          sudo docker-compose -f docker-compose.back.yaml pull
-          sudo docker-compose -f docker-compose.back.yaml up -d
+          sudo docker compose -f docker-compose.back.yaml down
+          sudo docker compose -f docker-compose.back.yaml pull
+          sudo docker compose -f docker-compose.back.yaml up -d
